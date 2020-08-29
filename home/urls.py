@@ -17,7 +17,7 @@ urlpatterns = [
     path('register/', views.UserFormView, name='register'),
     path('receptionist_register/', views.ReceptionistFormView, name='receptionist_register'),
     path('doctor_register/', views.DoctorFormView, name='doctor_register'),
-    # path('login/',views.login.as_view(template_name="home/login.html"),name='login'),
+    path('login/',views.login.as_view(template_name="home/login.html"),name='login'),
     re_path(r'^appointment/add$', views.AddAppointment, name='addappointment'),
     re_path(r'^appointment/(?P<pk>[0-9]+)/delete/$', views.AppointmentDelete, name='deleteappointment'),
     re_path(r'^appointment/(?P<pk>[0-9]+)/$', views.AppointmentUpdate, name='updateappointment'),
