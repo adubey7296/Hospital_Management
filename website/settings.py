@@ -9,10 +9,11 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
 import os
-
+import datetime
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
+STATIC_DIR=os.path.join(BASE_DIR,'static')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
@@ -22,14 +23,15 @@ SECRET_KEY = 'exsbk_c9s4bx3jethqt3()+*s3sc@qotz3k)r(thg6cc$tl*pv'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
-LOGIN_REDIRECT_URL = 'home:login_success'
+# LOGIN_REDIRECT_URL = 'home:login_success'
 
 # Application definition
 
 INSTALLED_APPS = [
     'home',
+    'widget_tweaks',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -86,8 +88,8 @@ DATABASES = {
 }
 
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -125,8 +127,22 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
+
 STATIC_URL = '/static/'
-LOGIN_URL = ''
-STATIC_URL = '/static/'
-STATIC_ROOT = ''
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+STATICFILES_DIRS=[STATIC_DIR,]
+
+MEDIA_ROOT=os.path.join(BASE_DIR,'static')
+
+
+
+LOGIN_REDIRECT_URL='/afterlogin'
+#for contact us give your gmail id and password
+
+EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'xyz@gmail.com'
+EMAIL_HOST_PASSWORD = 'xyz123'
+EMAIL_RECEIVING_USER = 'xyz@gmail.com'

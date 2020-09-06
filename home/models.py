@@ -1,85 +1,169 @@
 from django.db import models
-# from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-import datetime
 
 
 
-class Person(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    type = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.user.username
-
-
+departments=[('Cardiologist','Cardiologist'),
+('Dermatologists','Dermatologists'),
+('Emergency Medicine Specialists','Emergency Medicine Specialists'),
+('Allergists/Immunologists','Allergists/Immunologists'),
+('Anesthesiologists','Anesthesiologists'),
+('Colon and Rectal Surgeons','Colon and Rectal Surgeons')
+]
 class Doctor(models.Model):
-    person = models.OneToOneField(Person, on_delete=models.CASCADE)
-    Speciality = models.CharField(max_length=100 , default=None)
-
+    user=models.OneToOneField(User,on_delete=models.CASCADE)
+    profile_pic= models.ImageField(upload_to='profile_pic/DoctorProfilePic/',null=True,blank=True)
+    address = models.CharField(max_length=40,null=True)
+    mobile = models.CharField(max_length=20,null=True)
+    department= models.CharField(max_length=50,choices=departments,default='Cardiologist')
+    status=models.BooleanField(default=False)
+    @property
+    def get_name(self):
+        return self.user.first_name+" "+self.user.last_name
+    @property
+    def get_id(self):
+        return self.user.id
     def __str__(self):
-        return self.person.user.username
+        return "{} ({})".format(self.user.first_name,self.department)
 
-class Doctor(models.Model):
-    person = models.OneToOneField(Person, on_delete=models.CASCADE)
-    Speciality = models.CharField(max_length=100 , default=None)
-    Address = models.CharField(max_length=100 , default=None)
-    Email = models.CharField(max_length=100 , default=None)
-    Phone = models.CharField(max_length=100 , default=None)
-    gender = models.CharField(max_length=100 , default=None)
-
-    def __str__(self):
-        return self.person.user.username
-
-
-
-class Receptionist(models.Model):
-    person = models.OneToOneField(Person, on_delete=models.CASCADE)
-    Address = models.CharField(max_length=100 , default=None)
-    Email = models.CharField(max_length=100 , default=None)
-    Phone = models.CharField(max_length=100 , default=None)
-    gender = models.CharField(max_length=100 , default=None)
-
-    def __str__(self):
-        return self.person.user.username
 
 
 class Patient(models.Model):
-    person = models.OneToOneField(Person, on_delete=models.CASCADE)
-    location = models.CharField(max_length=500 , blank=True , default='')
-    bio = models.CharField(max_length=500, blank=True)
-    Address = models.CharField(max_length=100 , default=None)
-    Email = models.CharField(max_length=100 , default=None)
-    Phone = models.CharField(max_length=100 , default=None)
-    gender = models.CharField(max_length=100 , default=None)
-
+    user=models.OneToOneField(User,on_delete=models.CASCADE)
+    profile_pic= models.ImageField(upload_to='profile_pic/PatientProfilePic/',null=True,blank=True)
+    address = models.CharField(max_length=40,null=True)
+    mobile = models.CharField(max_length=20,null=False)
+    symptoms = models.CharField(max_length=100,null=False)
+    assignedDoctorId = models.PositiveIntegerField(null=True)
+    admitDate=models.DateField(auto_now=True)
+    status=models.BooleanField(default=False)
+    @property
+    def get_name(self):
+        return self.user.first_name+" "+self.user.last_name
+    @property
+    def get_id(self):
+        return self.user.id
     def __str__(self):
-        return self.person.user.username
+        return self.user.first_name+" ("+self.symptoms+")"
 
 
 class Appointment(models.Model):
-    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
-    Doctor = models.ForeignKey(Doctor , default=None, on_delete=models.CASCADE)
-    Date = models.DateField(("Date"), default=datetime.date.today)
-    Pending= 'PD'
-    Approved= 'AP'
-    Rejected = 'RJ'
-    STATUS = (
-        (Pending, 'Pending'),
-        (Approved, 'Approved'),
-        (Rejected, 'rejected'),
-    )
+    patientId=models.PositiveIntegerField(null=True)
+    doctorId=models.PositiveIntegerField(null=True)
+    patientName=models.CharField(max_length=40,null=True)
+    doctorName=models.CharField(max_length=40,null=True)
+    appointmentDate=models.DateField(auto_now=True)
+    description=models.TextField(max_length=500)
+    status=models.BooleanField(default=False)
 
-    status = models.CharField(
-        max_length=2,
-        choices=STATUS,
-        default=Pending,
-    )
 
-    message = models.CharField(max_length=1000 , default="Pending Approval")
 
-    def __str__(self):
-        return str(self.user)
+class PatientDischargeDetails(models.Model):
+    patientId=models.PositiveIntegerField(null=True)
+    patientName=models.CharField(max_length=40,null=True)
+    assignedDoctorName=models.CharField(max_length=40,null=True)
+    address = models.CharField(max_length=40,null=True)
+    mobile = models.CharField(max_length=20,null=True)
+    symptoms = models.CharField(max_length=100,null=True)
 
-    def get_absolute_url(self):
-        return reverse('home:index')
+    admitDate=models.DateField(null=False)
+    releaseDate=models.DateField(null=False)
+    daySpent=models.PositiveIntegerField(null=False)
+
+    roomCharge=models.PositiveIntegerField(null=False)
+    medicineCost=models.PositiveIntegerField(null=False)
+    doctorFee=models.PositiveIntegerField(null=False)
+    OtherCharge=models.PositiveIntegerField(null=False)
+    total=models.PositiveIntegerField(null=False)
+
+
+
+
+
+
+
+# from django.db import models
+# # from django.core.urlresolvers import reverse
+# from django.contrib.auth.models import User
+# import datetime
+#
+#
+#
+# class Person(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+#     type = models.IntegerField(default=0)
+#
+#     def __str__(self):
+#         return self.user.username
+#
+#
+# class Doctor(models.Model):
+#     person = models.OneToOneField(Person, on_delete=models.CASCADE)
+#     Speciality = models.CharField(max_length=100 , default=None)
+#
+#     def __str__(self):
+#         return self.person.user.username
+#
+# class Doctor(models.Model):
+#     person = models.OneToOneField(Person, on_delete=models.CASCADE)
+#     Speciality = models.CharField(max_length=100 , default=None)
+#     Address = models.CharField(max_length=100 , default=None)
+#     Email = models.CharField(max_length=100 , default=None)
+#     Phone = models.CharField(max_length=100 , default=None)
+#     gender = models.CharField(max_length=100 , default=None)
+#
+#     def __str__(self):
+#         return self.person.user.username
+#
+#
+#
+# class Receptionist(models.Model):
+#     person = models.OneToOneField(Person, on_delete=models.CASCADE)
+#     Address = models.CharField(max_length=100 , default=None)
+#     Email = models.CharField(max_length=100 , default=None)
+#     Phone = models.CharField(max_length=100 , default=None)
+#     gender = models.CharField(max_length=100 , default=None)
+#
+#     def __str__(self):
+#         return self.person.user.username
+#
+#
+# class Patient(models.Model):
+#     person = models.OneToOneField(Person, on_delete=models.CASCADE)
+#     location = models.CharField(max_length=500 , blank=True , default='')
+#     bio = models.CharField(max_length=500, blank=True)
+#     Address = models.CharField(max_length=100 , default=None)
+#     Email = models.CharField(max_length=100 , default=None)
+#     Phone = models.CharField(max_length=100 , default=None)
+#     gender = models.CharField(max_length=100 , default=None)
+#
+#     def __str__(self):
+#         return self.person.user.username
+#
+#
+# class Appointment(models.Model):
+#     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+#     Doctor = models.ForeignKey(Doctor , default=None, on_delete=models.CASCADE)
+#     Date = models.DateField(("Date"), default=datetime.date.today)
+#     Pending= 'PD'
+#     Approved= 'AP'
+#     Rejected = 'RJ'
+#     STATUS = (
+#         (Pending, 'Pending'),
+#         (Approved, 'Approved'),
+#         (Rejected, 'rejected'),
+#     )
+#
+#     status = models.CharField(
+#         max_length=2,
+#         choices=STATUS,
+#         default=Pending,
+#     )
+#
+#     message = models.CharField(max_length=1000 , default="Pending Approval")
+#
+#     def __str__(self):
+#         return str(self.user)
+#
+#     def get_absolute_url(self):
+#         return reverse('home:index')
